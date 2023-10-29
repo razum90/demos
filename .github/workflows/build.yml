@@ -36,8 +36,9 @@ jobs:
           docker build -t tsc/crac-spring-boot:builder .
           docker run -d --privileged --name=crac-spring-boot --ulimit nofile=1024 -p 8080:8080 -m 8g tsc/crac-spring-boot:builder
           sleep 30
+          dmesg -T | grep oom-killer || echo "No OOM Killer logs found."
           docker logs crac-spring-boot || echo "Failed to fetch logs."
           docker ps -a | grep crac-spring-boot
-          docker commit --change='ENTRYPOINT ["/opt/app/entrypoint.sh"]' $(docker ps -qf "name=crac-spring-boot") tsc/crac-spring-boot:checkpoint
-          docker push tsc/crac-spring-boot:checkpoint
+          docker commit crac-spring-boot transcendsoftware/crac-spring-boot:latest
+          docker push transcendsoftware/crac-spring-boot:latest
           docker kill $(docker ps -qf "name=crac-spring-boot")
