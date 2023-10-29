@@ -34,9 +34,9 @@ jobs:
         working-directory: crac-spring-boot
         run: |
           docker build -t tsc/crac-spring-boot:builder .
-          docker run -d --privileged --rm --name=crac-spring-boot --ulimit nofile=1024 -p 8080:8080 tsc/crac-spring-boot:builder
+          docker run -d --privileged --name=crac-spring-boot --ulimit nofile=1024 -p 8080:8080 tsc/crac-spring-boot:builder
           sleep 10
-          docker logs crac-spring-boot
+          docker logs crac-spring-boot || echo "Failed to fetch logs."
           docker ps -a | grep crac-spring-boot
           docker commit --change='ENTRYPOINT ["/opt/app/entrypoint.sh"]' $(docker ps -qf "name=crac-spring-boot") tsc/crac-spring-boot:checkpoint
           docker push tsc/crac-spring-boot:checkpoint
